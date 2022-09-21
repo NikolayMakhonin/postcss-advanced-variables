@@ -1,5 +1,5 @@
 {
-  "name": "postcss-advanced-variables",
+  "name": "@flemist/postcss-advanced-variables",
   "version": "4.0.0",
   "description": "Use Sass-like variables, conditionals, and iterators in CSS",
   "author": "Jonathan Neal <jonathantneal@hotmail.com>",
@@ -13,6 +13,9 @@
     "index.js",
     "index.mjs"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prepublishOnly": "npm test",
     "pretest": "rollup -c .rollup.js --silent",
