@@ -21,7 +21,7 @@ export default function transformIncludeAtrule(rule, opts) {
 			// set @mixin variables on the @include at-rule
 			for (const argName in args) {
 				if (Object.prototype.hasOwnProperty.call(args, argName)) {
-          const index = +argName
+          const index = Number(argName)
 					if (!(
             index >= 0 && index < mixin.params.length
             || mixin.params.some(param => param.name === argName)
