@@ -1,5 +1,10 @@
 # Changes to PostCSS Advanced Variables
 
+### 5.0.0
+
+- added new syntax: $var: _"JSON string"_ ;
+- improved @include rule: added support css variables, parens inside arguments, and named arguments 
+
 ### 4.0.0
 
 - Updated: `postcss` to ^8.2.4 (major)

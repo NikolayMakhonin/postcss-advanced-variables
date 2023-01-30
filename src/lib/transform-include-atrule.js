@@ -19,11 +19,23 @@ export default function transformIncludeAtrule(rule, opts) {
 		// if the @mixin variable exists
 		if (mixin) {
 			// set @mixin variables on the @include at-rule
+			for (const argName in args) {
+				if (Object.prototype.hasOwnProperty.call(args, argName)) {
+          const index = +argName
+					if (!(
+            index >= 0 && index < mixin.params.length
+            || mixin.params.some(param => param.name === argName)
+          )) {
+						throw rule.error(`The mixin "${name}" does not have a parameter named "${argName}"`);
+					}
+				}
+			}
+
 			mixin.params.forEach(
 				(param, index) => {
-					const arg = index in args
-						? getReplacedString(args[index], rule, opts)
-					: param.value;
+					const arg = index in args ? getReplacedString(args[index], rule, opts)
+						: param.name in args ? getReplacedString(args[param.name], rule, opts)
+						: param.value;
 
 					setVariable(rule, param.name, arg, opts);
 				}
@@ -53,10 +65,30 @@ export default function transformIncludeAtrule(rule, opts) {
 // return the @include statement options (@include NAME, @include NAME(ARGS))
 const getIncludeOpts = node => {
 	// @include name and args
-	const [ name, sourceArgs ] = node.params.split(matchOpeningParen, 2);
+  let parenIndex = node.params.indexOf(matchOpeningParen);
+  let name, sourceArgs
+	if (parenIndex >= 0) {
+		name = node.params.substring(0, parenIndex)
+		sourceArgs = node.params.substring(parenIndex + 1, node.params.length - 1)
+	} else {
+		name = node.params
+		sourceArgs = null
+	}
+
 	const args = sourceArgs
-		? list.comma(sourceArgs.slice(0, -1))
-	: [];
+		? list.comma(sourceArgs.slice(0))
+      .reduce((acc, arg, index) => {
+        const nameValue = arg.startsWith('$')
+					? list.split(arg, [':'], true)
+					: null
+				if (nameValue?.length >= 2) {
+					acc[nameValue[0].substring(1)] = nameValue[1]
+				} else {
+					acc[index] = arg
+				}
+        return acc
+      }, {})
+		: [];
 
 	return { name, args };
 };
