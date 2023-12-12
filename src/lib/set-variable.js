@@ -16,7 +16,12 @@ export default function setVariable(node, name, value, opts) {
 		// set the variable
 		node.variables[name] = typeof undefaultedValue === 'string'
 			? undefaultedValue.replace(/_(".*?")_/gs, (_, str) => {
-				return JSON.parse(str);
+				try {
+					return JSON.parse(str);
+				} catch (error) {
+					error.message += `\nJSON.parse("${str}")`;
+					throw error;
+				}
 			})
 			: undefaultedValue;
 	}
