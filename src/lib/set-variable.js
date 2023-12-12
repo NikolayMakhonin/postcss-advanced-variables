@@ -19,7 +19,7 @@ export default function setVariable(node, name, value, opts) {
 				try {
 					return JSON.parse(str);
 				} catch (error) {
-					error.message += `\nJSON.parse("${str}")`;
+					error.message += `\nJSON.parse(${str})`;
 					throw error;
 				}
 			})
